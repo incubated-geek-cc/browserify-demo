@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+  <title>JSON ⇆ CSV</title>
+  <head>
+    <style>
+      html,body {
+        font-family: consolas, sans-serif;
+        padding:0;
+        margin:0;
+      }
+      body {
+        padding:4px;
+        width: calc(100vw - 8px);
+        height: calc(100vh - 8px);
+        overflow-x:hidden;
+        overflow-y:auto;
+      }
+      table {        
+        border-collapse: collapse;
+        width: 100%;
+      }
+      td, 
+      th {
+        border: 1px solid #dddddd;
+        text-align: left;
+        padding: 2px;
+      }
+      table tr:nth-child(2) th:nth-child(2),
+      table :nth-child(3) th:nth-child(1) {
+        vertical-align: bottom;
+        text-align:center;
+      }
+      table :nth-child(3) th:nth-child(1) {
+        vertical-align: top;
+      }
+      textarea,
+      textarea:active {
+        height: 70vh;
+        width: calc(100% - 8px);
+        overflow-x:hidden;
+        overflow-y:auto;
+        resize:none;
+        background:transparent;
+        border: 1px solid #101010;
+      }
+
+      button {
+        display: inline-block;
+        margin-bottom: 0;
+        font-weight: 400;
+        text-align: center;
+        white-space: nowrap;
+        vertical-align: middle;
+        -ms-touch-action: manipulation;
+        touch-action: manipulation;
+        cursor: pointer;
+        background-image: none;
+        border: 1px solid transparent;
+        padding: 6px 12px;
+        font-size: 14px;
+        line-height: 1.42857143;
+        border-radius: 4px;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+        color: #fff;
+        background-color: #5bc0de;
+        border-color: #46b8da;
+      }
+
+      button:hover,
+      button:active {
+          color: #fff;
+          background-color: #269abc;
+          border-color: #1b6d85;
+      }
+
+    </style>
+  </head>
+  <body>
+    <h2>JSON ⇆ CSV</h2>
+    <table>
+      <tr><th>JSON</th><td></td><th>CSV</th></tr>
+      <tr>
+        <td rowspan='2'><textarea id="inputTextArea"></textarea></td>
+        <th><button type="button" id="convertJSONToCSV">⇾</button></th>
+        <td rowspan='2'><textarea id="outputTextArea"></textarea></td>
+      </tr>
+      <tr>
+        <th><button type="button" id="convertCSVToJSON">⇽</button></th>
+      </tr>
+    </table>
+  </body>
+  <script type="text/javascript" src="json2csv.js"></script>
+  <script type="text/javascript">
+    let sampleJsonObj=[
+      {
+        "Make": "Nissan",
+        "Model": "Murano",
+        "Year": 2013,
+        "Specifications": {
+            "Mileage": 7106,
+            "Trim": "S AWD"
+        }
+      },
+      {
+        "Make": "BMW",
+        "Model": "X5",
+        "Year": 2014,
+        "Specifications": {
+            "Mileage": 3287,
+            "Trim": "M"
+        }
+      }
+    ];
+    var inputTextArea=document.getElementById("inputTextArea");
+    var outputTextArea=document.getElementById("outputTextArea");
+
+    inputTextArea.value=JSON.stringify(sampleJsonObj, undefined, 2);
+
+    var convertJSONToCSV=document.getElementById("convertJSONToCSV");
+    var convertCSVToJSON=document.getElementById("convertCSVToJSON");
+    
+    convertJSONToCSV.onclick=function(e) {
+      inputTextArea.style.color="#cccccc";
+      outputTextArea.style.color="green";
+      let inputJsonObj=JSON.parse(inputTextArea.value);
+      converter.json2csv(inputJsonObj, (json2csvErr, csv) =>{
+          if (json2csvErr) {
+              throw json2csvErr;
+          }
+          outputTextArea.value=csv;
+      });
+    };
+    convertCSVToJSON.onclick=function(e) {
+      inputTextArea.style.color="green";
+      outputTextArea.style.color="#cccccc";
+      let inputCSVTxt=outputTextArea.value;
+      converter.csv2json(inputCSVTxt, (csv2jsonErr, json) =>{
+          if (csv2jsonErr) {
+              throw csv2jsonErr;
+          }
+          inputTextArea.value=JSON.stringify(json, undefined, 2);
+      });
+    };
+  </script>
+</html>
